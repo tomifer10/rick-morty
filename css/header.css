@@ -1,0 +1,13 @@
+.header {
+  background-color: #80ee99;
+  display: flex;
+  justify-content: flex-start;
+  height: 4.5rem;
+  width: 100%;
+  font-family: "Roboto Mono", monospace;
+}
+
+.header h1 {
+  align-items: center;
+  margin-top: 1rem;
+}

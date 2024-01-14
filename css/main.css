@@ -1,0 +1,11 @@
+section {
+  flex: 80%;
+  padding: 2rem;
+}
+
+.episode-container {
+  background-color: #b5e48c;
+  height: 50vh;
+  margin: 5rem;
+  padding: 2rem;
+}

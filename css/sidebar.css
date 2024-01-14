@@ -1,0 +1,18 @@
+.main-container {
+  display: flex;
+}
+
+aside {
+  flex: 20%;
+  background-color: var(--sidebar-color);
+}
+
+.nav-container {
+  list-style-type: none;
+  padding: 0;
+}
+.nav-container li {
+  border-bottom: 1px solid black;
+  padding: 0;
+  padding: 1rem;
+}

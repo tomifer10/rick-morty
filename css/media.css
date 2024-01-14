@@ -1,0 +1,11 @@
+/* Mobile-first styles */
+@media only screen and (max-width: 600px) {
+  .header {
+    height: auto; /* Allow the height to adjust based on content */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+  }
+  .header h1 {
+    margin-top: 0.2rem; /* Add some space between the logo and the title */
+  }
+}
