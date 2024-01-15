@@ -8,6 +8,16 @@ type Episode = {
   url: string;
   created: string;
 };
+
+type CharacterInfos = {
+  name: string;
+  status: string;
+  species: string;
+  type: string;
+  gender: string;
+  origin: {}[];
+  image: string;
+};
 const episodesList = document.querySelector(".nav-container");
 const episodeName = document.querySelector(".episode-title");
 const episodeDetailsContainer = document.querySelector(".episode-container");
@@ -18,7 +28,6 @@ function fetchEpisodes(): Promise<Episode[]> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     const url = "https://rickandmortyapi.com/api/episode";
-
     xhr.open("GET", url, true);
 
     xhr.onreadystatechange = function () {
@@ -43,20 +52,22 @@ function fetchEpisodes(): Promise<Episode[]> {
   });
 }
 
-function fetchCharacterInfo(
-  url: string
-): Promise<{ name: string; image: string }> {
+function fetchCharacterInfo(url: string): Promise<CharacterInfos> {
   return new Promise((resolve, reject) => {
     const xhr = new XMLHttpRequest();
     xhr.open("GET", url, true);
-
     xhr.onreadystatechange = function () {
       if (xhr.readyState === 4) {
         if (xhr.status === 200) {
           try {
             const response = JSON.parse(xhr.responseText);
-            const characterInfo = {
+            const characterInfo: CharacterInfos = {
               name: response.name,
+              status: response.status,
+              species: response.species,
+              type: response.tpye,
+              gender: response.gender,
+              origin: response.origin,
               image: response.image,
             };
             resolve(characterInfo);
@@ -69,12 +80,21 @@ function fetchCharacterInfo(
           reject(new Error(`Request failed with status ${xhr.status}`));
         }
       }
-      xhr.onerror = function () {
-        reject(new Error("Network error"));
-      };
-      xhr.send();
     };
+    xhr.onerror = function () {
+      reject(new Error("Network error"));
+    };
+    xhr.send();
   });
+}
+
+//FUNCTION TO FETCH INFORMATION FORAN ARRAY OF CHARACTER URL
+async function fetchCharactersInfo(
+  characterUrl: string[]
+): Promise<CharacterInfos[]> {
+  const characterPromises: Promise<CharacterInfos>[] =
+    characterUrl.map(fetchCharacterInfo);
+  return Promise.all(characterPromises);
 }
 
 async function displayEpisodeDetails(episode: Episode, container: HTMLElement) {
@@ -84,17 +104,18 @@ async function displayEpisodeDetails(episode: Episode, container: HTMLElement) {
   <p>Episode Code: ${episode.episode}</p>
   <p>Characters:</p>`;
 
-  for (const characterUrl of episode.characters) {
-    console.log("Character URl:", characterUrl);
-    try {
-      const { name, image } = await fetchCharacterInfo(characterUrl);
-      container.innerHTML += `
-      <div>
-        <img src="${image}" alt="${name}"/>
-        <p>${name}</p>`;
-    } catch (error) {
-      console.error("Error fetching character information:", error);
+  try {
+    for (const characterUrl of episode.characters) {
+      const characterInfo = await fetchCharacterInfo(characterUrl);
+      container.innerHTML += `<div class="character-card">
+      <img src=${characterInfo.image} alt=${characterInfo.name}/>
+      <p>${characterInfo.name}</p>
+      <p>Status: ${characterInfo.status}</p>
+      <p> Species: ${characterInfo.species}</p>
+      </div>`;
     }
+  } catch (error) {
+    console.error("Error fetching characters information:", error);
   }
 }
 
@@ -102,12 +123,13 @@ fetchEpisodes()
   .then((episodes) => {
     console.log("Fetched episodes:", episodes);
 
-    episodesList?.addEventListener("click", (event) => {
+    episodesList?.addEventListener("click", async (event) => {
       const clickedElement = event.target as HTMLElement;
 
       if (clickedElement.tagName === "LI") {
         const episodeId = parseInt(
-          clickedElement.textContent?.split(" ")[1] || ""
+          clickedElement.textContent?.split(" ")[1] || "",
+          10
         );
         const selectedEpisode = episodes.find(
           (episode) => episode.id === episodeId
