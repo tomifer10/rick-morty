@@ -1,13 +1,19 @@
 .header {
-  background-color: #80ee99;
+  position: sticky;
+  top: 0;
+  background-color: #b5e48c;
   display: flex;
   justify-content: flex-start;
   height: 4.5rem;
   width: 100%;
-  font-family: "Roboto Mono", monospace;
+  z-index: 1000;
 }
 
 .header h1 {
   align-items: center;
   margin-top: 1rem;
+}
+
+.header image {
+  color: var(--sidebar-color);
 }
