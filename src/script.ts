@@ -18,38 +18,61 @@ type CharacterInfos = {
   origin: {}[];
   image: string;
 };
-const episodesList = document.querySelector(".nav-container");
+const episodesList: HTMLUListElement =
+  document.querySelector(".nav-container")!;
 const episodeName = document.querySelector(".episode-title");
 const episodeDetailsContainer = document.querySelector(".episode-container");
 const episodeOneBtn = document.querySelector("#e1");
 
 // Function to fetch episodes from the api using ajax
-function fetchEpisodes(): Promise<Episode[]> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    const url = "https://rickandmortyapi.com/api/episode";
-    xhr.open("GET", url, true);
+async function fetchEpisodes(): Promise<Episode[]> {
+  const allEpisodes: Episode[] = [];
 
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            const episodes: Episode[] = response.results;
-            resolve(episodes);
-          } catch (error) {
-            reject(error);
+  async function fetchPage(pageNumber: number): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const xhr = new XMLHttpRequest();
+      const url = `https://rickandmortyapi.com/api/episode?page=${pageNumber}`;
+      xhr.open("GET", url, true);
+
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4) {
+          if (xhr.status === 200) {
+            try {
+              const response = JSON.parse(xhr.responseText);
+              const episodes: Episode[] = response.results;
+              allEpisodes.push(...episodes);
+              resolve();
+            } catch (error) {
+              reject(error);
+            }
+          } else {
+            reject(new Error("Request failed with status ${xhr.status"));
           }
-        } else {
-          reject(new Error("Request failed with status ${xhr.status"));
         }
-      }
-    };
-    xhr.onerror = function () {
-      reject(new Error("Network error"));
-    };
-    xhr.send();
+      };
+      xhr.onerror = function () {
+        reject(new Error("Network error"));
+      };
+      xhr.send();
+    });
+  }
+  try {
+    await fetchPage(1);
+    await fetchPage(2);
+    await fetchPage(3);
+  } catch (error) {
+    console.error("Error fetching episodes:", error);
+  }
+
+  episodesList.innerHTML = "";
+
+  allEpisodes.forEach((episode) => {
+    const listItem = document.createElement("li");
+    listItem.textContent = `${episode.episode}`;
+    listItem.setAttribute("data-episode", episode.episode.toString());
+    episodesList?.appendChild(listItem);
   });
+  return allEpisodes;
 }
 
 function fetchCharacterInfo(url: string): Promise<CharacterInfos> {
@@ -65,7 +88,7 @@ function fetchCharacterInfo(url: string): Promise<CharacterInfos> {
               name: response.name,
               status: response.status,
               species: response.species,
-              type: response.tpye,
+              type: response.type,
               gender: response.gender,
               origin: response.origin,
               image: response.image,
@@ -105,8 +128,8 @@ async function displayEpisodeDetails(episode: Episode, container: HTMLElement) {
   <p>Characters:</p>`;
 
   try {
-    for (const characterUrl of episode.characters) {
-      const characterInfo = await fetchCharacterInfo(characterUrl);
+    const characterInfoArray = await fetchCharactersInfo(episode.characters);
+    for (const characterInfo of characterInfoArray) {
       container.innerHTML += `<div class="character-card">
       <img src=${characterInfo.image} alt=${characterInfo.name}/>
       <p>${characterInfo.name}</p>
@@ -127,12 +150,9 @@ fetchEpisodes()
       const clickedElement = event.target as HTMLElement;
 
       if (clickedElement.tagName === "LI") {
-        const episodeId = parseInt(
-          clickedElement.textContent?.split(" ")[1] || "",
-          10
-        );
+        const episodeCode = clickedElement.dataset.episode;
         const selectedEpisode = episodes.find(
-          (episode) => episode.id === episodeId
+          (episode) => episode.episode === episodeCode
         );
 
         if (selectedEpisode) {

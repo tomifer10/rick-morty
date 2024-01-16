@@ -13,31 +13,55 @@ const episodeName = document.querySelector(".episode-title");
 const episodeDetailsContainer = document.querySelector(".episode-container");
 const episodeOneBtn = document.querySelector("#e1");
 function fetchEpisodes() {
-    return new Promise((resolve, reject) => {
-        const xhr = new XMLHttpRequest();
-        const url = "https://rickandmortyapi.com/api/episode";
-        xhr.open("GET", url, true);
-        xhr.onreadystatechange = function () {
-            if (xhr.readyState === 4) {
-                if (xhr.status === 200) {
-                    try {
-                        const response = JSON.parse(xhr.responseText);
-                        const episodes = response.results;
-                        resolve(episodes);
-                    }
-                    catch (error) {
-                        reject(error);
-                    }
-                }
-                else {
-                    reject(new Error("Request failed with status ${xhr.status"));
-                }
-            }
-        };
-        xhr.onerror = function () {
-            reject(new Error("Network error"));
-        };
-        xhr.send();
+    return __awaiter(this, void 0, void 0, function* () {
+        const allEpisodes = [];
+        function fetchPage(pageNumber) {
+            return __awaiter(this, void 0, void 0, function* () {
+                return new Promise((resolve, reject) => {
+                    const xhr = new XMLHttpRequest();
+                    const url = `https://rickandmortyapi.com/api/episode?page=${pageNumber}`;
+                    xhr.open("GET", url, true);
+                    xhr.onreadystatechange = function () {
+                        if (xhr.readyState === 4) {
+                            if (xhr.status === 200) {
+                                try {
+                                    const response = JSON.parse(xhr.responseText);
+                                    const episodes = response.results;
+                                    allEpisodes.push(...episodes);
+                                    resolve();
+                                }
+                                catch (error) {
+                                    reject(error);
+                                }
+                            }
+                            else {
+                                reject(new Error("Request failed with status ${xhr.status"));
+                            }
+                        }
+                    };
+                    xhr.onerror = function () {
+                        reject(new Error("Network error"));
+                    };
+                    xhr.send();
+                });
+            });
+        }
+        try {
+            yield fetchPage(1);
+            yield fetchPage(2);
+            yield fetchPage(3);
+        }
+        catch (error) {
+            console.error("Error fetching episodes:", error);
+        }
+        episodesList.innerHTML = "";
+        allEpisodes.forEach((episode) => {
+            const listItem = document.createElement("li");
+            listItem.textContent = `${episode.episode}`;
+            listItem.setAttribute("data-episode", episode.episode.toString());
+            episodesList === null || episodesList === void 0 ? void 0 : episodesList.appendChild(listItem);
+        });
+        return allEpisodes;
     });
 }
 function fetchCharacterInfo(url) {
@@ -53,7 +77,7 @@ function fetchCharacterInfo(url) {
                             name: response.name,
                             status: response.status,
                             species: response.species,
-                            type: response.tpye,
+                            type: response.type,
                             gender: response.gender,
                             origin: response.origin,
                             image: response.image,
@@ -89,8 +113,8 @@ function displayEpisodeDetails(episode, container) {
   <p>Episode Code: ${episode.episode}</p>
   <p>Characters:</p>`;
         try {
-            for (const characterUrl of episode.characters) {
-                const characterInfo = yield fetchCharacterInfo(characterUrl);
+            const characterInfoArray = yield fetchCharactersInfo(episode.characters);
+            for (const characterInfo of characterInfoArray) {
                 container.innerHTML += `<div class="character-card">
       <img src=${characterInfo.image} alt=${characterInfo.name}/>
       <p>${characterInfo.name}</p>
@@ -108,11 +132,10 @@ fetchEpisodes()
     .then((episodes) => {
     console.log("Fetched episodes:", episodes);
     episodesList === null || episodesList === void 0 ? void 0 : episodesList.addEventListener("click", (event) => __awaiter(void 0, void 0, void 0, function* () {
-        var _a;
         const clickedElement = event.target;
         if (clickedElement.tagName === "LI") {
-            const episodeId = parseInt(((_a = clickedElement.textContent) === null || _a === void 0 ? void 0 : _a.split(" ")[1]) || "", 10);
-            const selectedEpisode = episodes.find((episode) => episode.id === episodeId);
+            const episodeCode = clickedElement.dataset.episode;
+            const selectedEpisode = episodes.find((episode) => episode.episode === episodeCode);
             if (selectedEpisode) {
                 if (episodeDetailsContainer instanceof HTMLElement) {
                     displayEpisodeDetails(selectedEpisode, episodeDetailsContainer);
