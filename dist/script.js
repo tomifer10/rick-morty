@@ -1,4 +1,3 @@
-"use strict";
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -11,7 +10,21 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 const episodesList = document.querySelector(".nav-container");
 const episodeName = document.querySelector(".episode-title");
 const episodeDetailsContainer = document.querySelector(".episode-container");
-const episodeOneBtn = document.querySelector("#e1");
+const characterInfoContainer = document.querySelector(".character-list-container");
+const characterCard = document.querySelector(".character-card");
+const welcomeContainer = document.querySelector(".welcome-container");
+function toggleVisibility(element) {
+    if (element.classList.contains("hidden")) {
+        element.classList.remove("hidden");
+    }
+    else {
+        element.classList.add("hidden");
+    }
+}
+function hideWelcomeContainer(container) {
+    container.innerHTML = "";
+}
+let episodes = [];
 function fetchEpisodes() {
     return __awaiter(this, void 0, void 0, function* () {
         const allEpisodes = [];
@@ -74,13 +87,18 @@ function fetchCharacterInfo(url) {
                     try {
                         const response = JSON.parse(xhr.responseText);
                         const characterInfo = {
+                            id: response.id,
                             name: response.name,
                             status: response.status,
                             species: response.species,
                             type: response.type,
                             gender: response.gender,
                             origin: response.origin,
+                            location: response.location,
                             image: response.image,
+                            episode: response.episode,
+                            url: response.url,
+                            created: response.created,
                         };
                         resolve(characterInfo);
                     }
@@ -107,15 +125,16 @@ function fetchCharactersInfo(characterUrl) {
 }
 function displayEpisodeDetails(episode, container) {
     return __awaiter(this, void 0, void 0, function* () {
-        container.innerHTML = `
+        container.innerHTML = ` <div class="episodes-datas">
   <h2>Episode ${episode.id}: ${episode.name}</h2>
   <p>Air Date: ${episode.air_date}</p>
   <p>Episode Code: ${episode.episode}</p>
-  <p>Characters:</p>`;
+  <p>Characters:</p>
+  </div>`;
         try {
             const characterInfoArray = yield fetchCharactersInfo(episode.characters);
             for (const characterInfo of characterInfoArray) {
-                container.innerHTML += `<div class="character-card">
+                container.innerHTML += `<div class="character-card" character-id="${characterInfo.id}">
       <img src=${characterInfo.image} alt=${characterInfo.name}/>
       <p>${characterInfo.name}</p>
       <p>Status: ${characterInfo.status}</p>
@@ -137,8 +156,9 @@ fetchEpisodes()
             const episodeCode = clickedElement.dataset.episode;
             const selectedEpisode = episodes.find((episode) => episode.episode === episodeCode);
             if (selectedEpisode) {
-                if (episodeDetailsContainer instanceof HTMLElement) {
-                    displayEpisodeDetails(selectedEpisode, episodeDetailsContainer);
+                if (characterInfoContainer instanceof HTMLElement) {
+                    displayEpisodeDetails(selectedEpisode, characterInfoContainer);
+                    hideWelcomeContainer(welcomeContainer);
                 }
             }
         }
@@ -147,4 +167,5 @@ fetchEpisodes()
     .catch((error) => {
     console.error("Error:", error);
 });
+export {};
 //# sourceMappingURL=script.js.map

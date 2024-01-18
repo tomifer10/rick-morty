@@ -1,29 +1,29 @@
-// Define Type for episode data
-type Episode = {
-  id: number;
-  name: string;
-  air_date: string;
-  episode: string;
-  characters: string[];
-  url: string;
-  created: string;
-};
+import { Episode, CharacterInfos, Location, Seasons } from "./types/interface";
 
-type CharacterInfos = {
-  name: string;
-  status: string;
-  species: string;
-  type: string;
-  gender: string;
-  origin: {}[];
-  image: string;
-};
 const episodesList: HTMLUListElement =
   document.querySelector(".nav-container")!;
 const episodeName = document.querySelector(".episode-title");
 const episodeDetailsContainer = document.querySelector(".episode-container");
-const episodeOneBtn = document.querySelector("#e1");
+const characterInfoContainer = document.querySelector(
+  ".character-list-container"
+) as HTMLElement;
+const characterCard = document.querySelector(".character-card");
+const welcomeContainer = document.querySelector(
+  ".welcome-container"
+) as HTMLElement;
 
+function toggleVisibility(element: HTMLElement): void {
+  if (element.classList.contains("hidden")) {
+    element.classList.remove("hidden");
+  } else {
+    element.classList.add("hidden");
+  }
+}
+function hideWelcomeContainer(container: HTMLElement): void {
+  container.innerHTML = ""; // Clear the content
+}
+
+let episodes: Episode[] = [];
 // Function to fetch episodes from the api using ajax
 async function fetchEpisodes(): Promise<Episode[]> {
   const allEpisodes: Episode[] = [];
@@ -85,13 +85,18 @@ function fetchCharacterInfo(url: string): Promise<CharacterInfos> {
           try {
             const response = JSON.parse(xhr.responseText);
             const characterInfo: CharacterInfos = {
+              id: response.id,
               name: response.name,
               status: response.status,
               species: response.species,
               type: response.type,
               gender: response.gender,
               origin: response.origin,
+              location: response.location,
               image: response.image,
+              episode: response.episode,
+              url: response.url,
+              created: response.created,
             };
             resolve(characterInfo);
           } catch (error: any) {
@@ -121,16 +126,17 @@ async function fetchCharactersInfo(
 }
 
 async function displayEpisodeDetails(episode: Episode, container: HTMLElement) {
-  container.innerHTML = `
+  container.innerHTML = ` <div class="episodes-datas">
   <h2>Episode ${episode.id}: ${episode.name}</h2>
   <p>Air Date: ${episode.air_date}</p>
   <p>Episode Code: ${episode.episode}</p>
-  <p>Characters:</p>`;
+  <p>Characters:</p>
+  </div>`;
 
   try {
     const characterInfoArray = await fetchCharactersInfo(episode.characters);
     for (const characterInfo of characterInfoArray) {
-      container.innerHTML += `<div class="character-card">
+      container.innerHTML += `<div class="character-card" character-id="${characterInfo.id}">
       <img src=${characterInfo.image} alt=${characterInfo.name}/>
       <p>${characterInfo.name}</p>
       <p>Status: ${characterInfo.status}</p>
@@ -156,8 +162,9 @@ fetchEpisodes()
         );
 
         if (selectedEpisode) {
-          if (episodeDetailsContainer instanceof HTMLElement) {
-            displayEpisodeDetails(selectedEpisode, episodeDetailsContainer);
+          if (characterInfoContainer instanceof HTMLElement) {
+            displayEpisodeDetails(selectedEpisode, characterInfoContainer);
+            hideWelcomeContainer(welcomeContainer);
           }
         }
       }

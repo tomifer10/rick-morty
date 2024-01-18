@@ -23,52 +23,35 @@
 
     <header class="header">
       <img src="./assets/b6740400-92d4-11ea-8a13-d5f6e0558e9b.svg" alt="" />
-      <h1>R&M NAV</h1>
+      <h1>R&M Dim</h1>
     </header>
-
-    <!-- MAIN
-    <section class="main-container">
-      <div>ep 1</div>
-      <div>ep 2</div>
-      <div>ep3</div>
-    </section> -->
-
-    <!-- SIDEBAR -->
 
     <div class="main-container">
       <div></div>
       <aside>
-        <ul class="nav-container" id="episodeList">
-          <!-- <li>Episode 1</li>
-          <li>Episode 2</li>
-          <li>Episode 3</li>
-          <li>Episode 4</li>
-          <li>Episode 5</li>
-          <li>Episode 6</li>
-          <li>Episode 7</li>
-          <li>Episode 8</li>
-          <li>Episode 9</li>
-          <li>Episode 10</li>
-          <li>Episode 11</li>
-          <li>Episode 12</li>
-          <li>Episode 13</li>
-          <li>Episode 14</li>
-          <li>Episode 15</li>
-          <li>Episode 16</li>
-          <li>Episode 17</li>
-          <li>Episode 18</li>
-          <li>Episode 19</li>
-          <li>Episode 20</li> -->
-        </ul>
-        <button class="loadMoreButton" id="loadMoreButton">Next</button>
-        <button class="backButton" id="backButton">Back</button>
+        <h2 class="nav-title">Episodes</h2>
+        <ul class="nav-container" id="episodeList"></ul>
+        <div class="button-container">
+          <button class="backButton" id="backButton">Back</button>
+          <button class="loadMoreButton" id="loadMoreButton">Next</button>
+        </div>
       </aside>
       <section class="episode-container">
-        <img class="imgcover" src="./assets/cover2.png" alt="" />
-        <h2 id="welcome">WELCOME TO RICK AND MORTY NAVIGATOR</h2>
+        <div class="welcome-container">
+          <img class="imgcover" src="./assets/cover2.png" alt="" />
+          <h2 id="welcome">WELCOME TO RICK AND MORTY DIMENSION</h2>
+        </div>
+        <div class="character-list-container"></div>
         <div class="character-container" id="characterContainer"></div>
+        <div class="trying"></div>
       </section>
     </div>
+    </div>
+    <footer class="footer">
+      <div class="footer-bottom">
+        <p>&copy; 2024 R&M Dim. All rights reserved.</p>
+      </div>
+    </footer>
   </body>
   <script src="./dist/script.js" type="module"></script>
 </html>
