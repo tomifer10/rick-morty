@@ -1,5 +1,5 @@
 .footer {
-  background-color: var(--header-color);
+  background-color: #c7f9cc;
   color: #fff;
   padding: 0.5rem;
   margin-top: 1rem;
@@ -7,6 +7,5 @@
 .footer-bottom {
   margin-top: 1rem;
   text-align: center;
-  color: black;
-  font-family: "Press Start 2P", system-ui;
+  color: #168aae;
 }

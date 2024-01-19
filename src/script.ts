@@ -2,7 +2,6 @@ import { Episode, CharacterInfos, Location, Seasons } from "./types/interface";
 
 const episodesList: HTMLUListElement =
   document.querySelector(".nav-container")!;
-const episodeName = document.querySelector(".episode-title");
 const episodeDetailsContainer = document.querySelector(".episode-container");
 const characterInfoContainer = document.querySelector(
   ".character-list-container"
@@ -11,55 +10,31 @@ const characterCard = document.querySelector(".character-card");
 const welcomeContainer = document.querySelector(
   ".welcome-container"
 ) as HTMLElement;
+const episodeDatas = document.querySelector(".episode-datas") as HTMLElement;
 
-function toggleVisibility(element: HTMLElement): void {
-  if (element.classList.contains("hidden")) {
-    element.classList.remove("hidden");
-  } else {
-    element.classList.add("hidden");
-  }
-}
 function hideWelcomeContainer(container: HTMLElement): void {
   container.innerHTML = ""; // Clear the content
 }
 
 let episodes: Episode[] = [];
-// Function to fetch episodes from the api using ajax
 async function fetchEpisodes(): Promise<Episode[]> {
   const allEpisodes: Episode[] = [];
 
-  async function fetchPage(pageNumber: number): Promise<void> {
-    return new Promise((resolve, reject) => {
-      const xhr = new XMLHttpRequest();
-      const url = `https://rickandmortyapi.com/api/episode?page=${pageNumber}`;
-      xhr.open("GET", url, true);
+  const fetchPage = async (pageNumber: number): Promise<void> => {
+    try {
+      const response = await fetch(
+        `https://rickandmortyapi.com/api/episode?page=${pageNumber}`
+      );
+      const data = await response.json();
+      allEpisodes.push(...data.results);
+    } catch (error) {
+      console.error(`Error fetching episodes for page ${pageNumber}:`, error);
+      throw error; // Propagate the error to the outer catch block
+    }
+  };
 
-      xhr.onreadystatechange = function () {
-        if (xhr.readyState === 4) {
-          if (xhr.status === 200) {
-            try {
-              const response = JSON.parse(xhr.responseText);
-              const episodes: Episode[] = response.results;
-              allEpisodes.push(...episodes);
-              resolve();
-            } catch (error) {
-              reject(error);
-            }
-          } else {
-            reject(new Error("Request failed with status ${xhr.status"));
-          }
-        }
-      };
-      xhr.onerror = function () {
-        reject(new Error("Network error"));
-      };
-      xhr.send();
-    });
-  }
   try {
-    await fetchPage(1);
-    await fetchPage(2);
-    await fetchPage(3);
+    await Promise.all([1, 2, 3].map(fetchPage));
   } catch (error) {
     console.error("Error fetching episodes:", error);
   }
@@ -72,48 +47,38 @@ async function fetchEpisodes(): Promise<Episode[]> {
     listItem.setAttribute("data-episode", episode.episode.toString());
     episodesList?.appendChild(listItem);
   });
+
   return allEpisodes;
 }
 
-function fetchCharacterInfo(url: string): Promise<CharacterInfos> {
-  return new Promise((resolve, reject) => {
-    const xhr = new XMLHttpRequest();
-    xhr.open("GET", url, true);
-    xhr.onreadystatechange = function () {
-      if (xhr.readyState === 4) {
-        if (xhr.status === 200) {
-          try {
-            const response = JSON.parse(xhr.responseText);
-            const characterInfo: CharacterInfos = {
-              id: response.id,
-              name: response.name,
-              status: response.status,
-              species: response.species,
-              type: response.type,
-              gender: response.gender,
-              origin: response.origin,
-              location: response.location,
-              image: response.image,
-              episode: response.episode,
-              url: response.url,
-              created: response.created,
-            };
-            resolve(characterInfo);
-          } catch (error: any) {
-            reject(
-              new Error(`Error parsing character response: ${error.message}`)
-            );
-          }
-        } else {
-          reject(new Error(`Request failed with status ${xhr.status}`));
-        }
-      }
+async function fetchCharacterInfo(url: string): Promise<CharacterInfos> {
+  try {
+    const response = await fetch(url);
+
+    if (!response.ok) {
+      throw new Error(`Request failed with status ${response.status}`);
+    }
+
+    const characterInfo: CharacterInfos = await response.json();
+
+    return {
+      id: characterInfo.id,
+      name: characterInfo.name,
+      status: characterInfo.status,
+      species: characterInfo.species,
+      type: characterInfo.type,
+      gender: characterInfo.gender,
+      origin: characterInfo.origin,
+      location: characterInfo.location,
+      image: characterInfo.image,
+      episode: characterInfo.episode,
+      url: characterInfo.url,
+      created: characterInfo.created,
     };
-    xhr.onerror = function () {
-      reject(new Error("Network error"));
-    };
-    xhr.send();
-  });
+  } catch (error) {
+    console.error(`Error fetching character info from ${url}:`, error);
+    throw error;
+  }
 }
 
 //FUNCTION TO FETCH INFORMATION FORAN ARRAY OF CHARACTER URL
@@ -126,12 +91,12 @@ async function fetchCharactersInfo(
 }
 
 async function displayEpisodeDetails(episode: Episode, container: HTMLElement) {
-  container.innerHTML = ` <div class="episodes-datas">
+  episodeDatas.innerHTML = ` 
   <h2>Episode ${episode.id}: ${episode.name}</h2>
   <p>Air Date: ${episode.air_date}</p>
   <p>Episode Code: ${episode.episode}</p>
   <p>Characters:</p>
-  </div>`;
+  `;
 
   try {
     const characterInfoArray = await fetchCharactersInfo(episode.characters);
@@ -151,6 +116,11 @@ async function displayEpisodeDetails(episode: Episode, container: HTMLElement) {
 fetchEpisodes()
   .then((episodes) => {
     console.log("Fetched episodes:", episodes);
+
+    // Prevent default behavior for clicks inside characterInfoContainer
+    characterInfoContainer.addEventListener("click", (event) => {
+      event.preventDefault();
+    });
 
     episodesList?.addEventListener("click", async (event) => {
       const clickedElement = event.target as HTMLElement;
@@ -173,3 +143,86 @@ fetchEpisodes()
   .catch((error) => {
     console.error("Error:", error);
   });
+
+document.addEventListener("click", (event) => {
+  const clickedElement = event.target as HTMLElement;
+
+  // Ocultar character-cards al hacer clic en una
+  if (clickedElement.classList.contains("character-card")) {
+    event.preventDefault();
+    const characterCards = document.querySelectorAll(".character-card");
+    characterCards.forEach((card) => card.classList.add("hidden"));
+
+    // Ocultar episodeDatas
+    episodeDatas.innerHTML = " ";
+  }
+
+  // Mostrar todo nuevamente al hacer clic en cualquier otro luga
+});
+
+async function showSelectedCharacter(characterId: number) {
+  const episodeContainer = document.querySelector(".episode-container");
+  if (!episodeContainer) return;
+
+  try {
+    // Fetch the selected character by ID
+    const selectedCharacterInfo = await fetchCharacterInfo(
+      `https://rickandmortyapi.com/api/character/${characterId}`
+    );
+
+    // Fetch origin information sequentially
+    const originData = await fetch(selectedCharacterInfo.origin.url);
+    const originInfo = await originData.json();
+
+    // Fetch episode names sequentially using the URLs
+    const episodeNames = [];
+    for (const episodeUrl of selectedCharacterInfo.episode) {
+      const episodeData = await fetch(episodeUrl);
+      const episodeJson = await episodeData.json();
+      episodeNames.push(episodeJson.name);
+    }
+
+    // Create a new div to hold the selected character information
+    const characterDiv = document.createElement("div");
+    characterDiv.classList.add("selected-character-container");
+
+    // Display the selected character information in the new div
+    characterDiv.innerHTML = `
+      <img src=${selectedCharacterInfo.image} alt=${
+      selectedCharacterInfo.name
+    }/>
+      <h2>${selectedCharacterInfo.name}</h2>
+      <p>Status: ${selectedCharacterInfo.status}</p>
+      <p>Species: ${selectedCharacterInfo.species}</p>
+      <p>Type: ${selectedCharacterInfo.type}</p>
+      <p>Gender: ${selectedCharacterInfo.gender}</p>
+      <p>Origin: ${originInfo.name}</p>
+      <p>Location: ${selectedCharacterInfo.location.name}</p>
+      <p>Episodes: ${episodeNames.join(", ")}</p>
+    `;
+
+    // Replace the content of episode-container with the new div
+    episodeContainer.innerHTML = "";
+    episodeContainer.appendChild(characterDiv);
+  } catch (error) {
+    console.error("Error fetching character information:", error);
+  }
+}
+document.addEventListener("click", (event) => {
+  const clickedElement = event.target as HTMLElement;
+
+  // Check if the clicked element is a character card
+  if (clickedElement.classList.contains("character-card")) {
+    // Prevent default behavior
+    // event.preventDefault();
+
+    // Get the character ID from the clicked card
+    const characterId = parseInt(
+      clickedElement.getAttribute("character-id") || "0",
+      10
+    );
+
+    // Show only the selected character card in episode-container
+    showSelectedCharacter(characterId);
+  }
+});

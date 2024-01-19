@@ -4,7 +4,7 @@ section {
 }
 
 .episode-container {
-  background-color: var(--header-color);
+  background-color: #c7f9cc;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -15,13 +15,15 @@ section {
   border-radius: 10px;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
 }
-.episodes-datas {
-  text-align: center;
-  width: 100%;
+.episode-datas {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  margin: 0;
 }
-.episodes-datas h2,
-.episodes-datas p {
-  display: block;
+.episode-datas h2,
+.episode-datas p {
   width: 100%;
   margin: 10px 0;
 }
@@ -32,6 +34,7 @@ section {
   align-items: center;
   justify-content: center;
   text-align: center;
+  height: ;
 }
 .episode-container > div {
   display: flex;
@@ -52,6 +55,8 @@ section {
   font-size: 2rem;
   margin-bottom: 1rem;
   text-align: center;
+  font-family: "Press Start 2P", system-ui;
+  color: #168aae;
 }
 
 .episode-container p {
@@ -64,7 +69,7 @@ section {
 }
 
 .character-card {
-  background-color: #fff;
+  background-color: #fffae0;
   width: 15rem;
   margin: 1rem;
   padding: 1rem;
@@ -74,6 +79,7 @@ section {
   display: flex;
   flex-direction: column;
   text-align: center;
+  transition: transform 0.3s ease-in-out;
 }
 
 .character-card img {
@@ -82,8 +88,14 @@ section {
   margin-bottom: 0.5rem;
   height: auto;
 }
+
+.character-card:hover {
+  transform: scale(1.1);
+  cursor: pointer;
+}
 #welcome {
   font-family: "Press Start 2P", system-ui;
+  color: #168aae;
 }
 
 .hidden {

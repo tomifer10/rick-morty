@@ -1,7 +1,7 @@
 .header {
   position: sticky;
   top: 0;
-  background-color: var(--header-color);
+  background-color: #c7f9cc;
   display: flex;
   justify-content: flex-start;
   height: 4.5rem;
@@ -14,8 +14,5 @@
   margin-top: 1.5rem;
   font-family: "Press Start 2P", system-ui;
   font-size: 1.5rem;
-}
-
-.header image {
-  color: var(--sidebar-color);
+  color: #168aae;
 }
