@@ -93,6 +93,27 @@ section {
   transform: scale(1.1);
   cursor: pointer;
 }
+
+.character-card p {
+  margin: 5px 0;
+}
+
+.character-card button {
+  background-color: #00afc8;
+  color: #b5e48c;
+  padding: 8px 16px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+.character-card button:hover {
+  background-color: #b5e48c;
+  color: #00afc8;
+}
+
 #welcome {
   font-family: "Press Start 2P", system-ui;
   color: #168aae;

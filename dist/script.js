@@ -128,15 +128,6 @@ fetchEpisodes()
     .catch((error) => {
     console.error("Error:", error);
 });
-document.addEventListener("click", (event) => {
-    const clickedElement = event.target;
-    if (clickedElement.classList.contains("character-card")) {
-        event.preventDefault();
-        const characterCards = document.querySelectorAll(".character-card");
-        characterCards.forEach((card) => card.classList.add("hidden"));
-        episodeDatas.innerHTML = " ";
-    }
-});
 function showSelectedCharacter(characterId) {
     return __awaiter(this, void 0, void 0, function* () {
         const episodeContainer = document.querySelector(".episode-container");
@@ -144,27 +135,27 @@ function showSelectedCharacter(characterId) {
             return;
         try {
             const selectedCharacterInfo = yield fetchCharacterInfo(`https://rickandmortyapi.com/api/character/${characterId}`);
-            console.log(fetchCharacterInfo);
             const episodeNames = [];
             for (const episodeUrl of selectedCharacterInfo.episode) {
                 const episodeData = yield fetch(episodeUrl);
                 const episodeJson = yield episodeData.json();
                 episodeNames.push(episodeJson.name);
             }
-            console.log(selectedCharacterInfo);
+            const selectedEpisode = episodes.find((episode) => (episode === null || episode === void 0 ? void 0 : episode.episode) === selectedCharacterInfo.episode[0]);
             const characterDiv = document.createElement("div");
             characterDiv.classList.add("selected-character-container");
             characterDiv.innerHTML = `
-      <img src=${selectedCharacterInfo.image} alt=${selectedCharacterInfo.name}/>
-      <h2>${selectedCharacterInfo.name}</h2>
-      <p>Status: ${selectedCharacterInfo.status}</p>
-      <p>Species: ${selectedCharacterInfo.species}</p>
-      <p>Type: ${selectedCharacterInfo.type}</p>
-      <p>Gender: ${selectedCharacterInfo.gender}</p>
-      <p>Origin: ${selectedCharacterInfo.origin.name}</p>
-      <p>Location: ${selectedCharacterInfo.location.name}</p>
-      <p>Episodes: ${episodeNames.join(", ")}</p>
-    `;
+        <img src=${selectedCharacterInfo.image} alt=${selectedCharacterInfo.name}/>
+        <h2>${selectedCharacterInfo.name}</h2>
+        <p>Status: ${selectedCharacterInfo.status}</p>
+        <p>Species: ${selectedCharacterInfo.species}</p>
+        <p>Type: ${selectedCharacterInfo.type}</p>
+        <p>Gender: ${selectedCharacterInfo.gender}</p>
+        <p>Origin: ${selectedCharacterInfo.origin.name}</p>
+        <p>Location: ${selectedCharacterInfo.location.name}</p>
+        <p>Episodes: ${episodeNames.join(", ")}</p>
+        
+      `;
             episodeContainer.innerHTML = "";
             episodeContainer.appendChild(characterDiv);
         }
@@ -174,10 +165,13 @@ function showSelectedCharacter(characterId) {
     });
 }
 document.addEventListener("click", (event) => {
+    var _a;
     const clickedElement = event.target;
-    if (clickedElement.classList.contains("character-card")) {
+    if (clickedElement.tagName.toLowerCase() === "button" &&
+        clickedElement.closest(".character-card")) {
         event.preventDefault();
-        const characterId = parseInt(clickedElement.getAttribute("character-id") || "0");
+        const characterId = parseInt(((_a = clickedElement.closest(".character-card")) === null || _a === void 0 ? void 0 : _a.getAttribute("character-id")) ||
+            "0");
         showSelectedCharacter(characterId);
     }
 });

@@ -143,24 +143,11 @@ fetchEpisodes()
     console.error("Error:", error);
   });
 
-document.addEventListener("click", (event) => {
-  const clickedElement = event.target as HTMLElement;
-
-  // Ocultar character-cards al hacer clic en una
-  if (clickedElement.classList.contains("character-card")) {
-    event.preventDefault();
-    const characterCards = document.querySelectorAll(".character-card");
-    characterCards.forEach((card) => card.classList.add("hidden"));
-
-    // Ocultar episodeDatas
-    episodeDatas.innerHTML = " ";
-  }
-
-  // Mostrar todo nuevamente al hacer clic en cualquier otro luga
-});
-
 async function showSelectedCharacter(characterId: number) {
-  const episodeContainer = document.querySelector(".episode-container");
+  // Use type assertion to cast Element to HTMLElement
+  const episodeContainer = document.querySelector(
+    ".episode-container"
+  ) as HTMLElement;
   if (!episodeContainer) return;
 
   try {
@@ -168,7 +155,6 @@ async function showSelectedCharacter(characterId: number) {
     const selectedCharacterInfo = await fetchCharacterInfo(
       `https://rickandmortyapi.com/api/character/${characterId}`
     );
-    console.log(fetchCharacterInfo);
 
     // Fetch episode names sequentially using the URLs
     const episodeNames = [];
@@ -177,7 +163,11 @@ async function showSelectedCharacter(characterId: number) {
       const episodeJson = await episodeData.json();
       episodeNames.push(episodeJson.name);
     }
-    console.log(selectedCharacterInfo);
+
+    // Find the episode corresponding to the selected character
+    const selectedEpisode = episodes.find(
+      (episode) => episode?.episode === selectedCharacterInfo.episode[0]
+    );
 
     // Create a new div to hold the selected character information
     const characterDiv = document.createElement("div");
@@ -185,40 +175,43 @@ async function showSelectedCharacter(characterId: number) {
 
     // Display the selected character information in the new div
     characterDiv.innerHTML = `
-      <img src=${selectedCharacterInfo.image} alt=${
+        <img src=${selectedCharacterInfo.image} alt=${
       selectedCharacterInfo.name
     }/>
-      <h2>${selectedCharacterInfo.name}</h2>
-      <p>Status: ${selectedCharacterInfo.status}</p>
-      <p>Species: ${selectedCharacterInfo.species}</p>
-      <p>Type: ${selectedCharacterInfo.type}</p>
-      <p>Gender: ${selectedCharacterInfo.gender}</p>
-      <p>Origin: ${selectedCharacterInfo.origin.name}</p>
-      <p>Location: ${selectedCharacterInfo.location.name}</p>
-      <p>Episodes: ${episodeNames.join(", ")}</p>
-    `;
+        <h2>${selectedCharacterInfo.name}</h2>
+        <p>Status: ${selectedCharacterInfo.status}</p>
+        <p>Species: ${selectedCharacterInfo.species}</p>
+        <p>Type: ${selectedCharacterInfo.type}</p>
+        <p>Gender: ${selectedCharacterInfo.gender}</p>
+        <p>Origin: ${selectedCharacterInfo.origin.name}</p>
+        <p>Location: ${selectedCharacterInfo.location.name}</p>
+        <p>Episodes: ${episodeNames.join(", ")}</p>
+        
+      `;
 
-    // Replace the content of episode-container with the new div
     episodeContainer.innerHTML = "";
     episodeContainer.appendChild(characterDiv);
+
+    // Add event listener for the "Go Back" button
   } catch (error) {
     console.error("Error fetching character information:", error);
   }
 }
+
 document.addEventListener("click", (event) => {
   const clickedElement = event.target as HTMLElement;
 
-  // Check if the clicked element is a character card
-  if (clickedElement.classList.contains("character-card")) {
-    // Prevent default behavior
+  if (
+    clickedElement.tagName.toLowerCase() === "button" &&
+    clickedElement.closest(".character-card")
+  ) {
     event.preventDefault();
 
-    // Get the character ID from the clicked card
     const characterId = parseInt(
-      clickedElement.getAttribute("character-id") || "0"
+      clickedElement.closest(".character-card")?.getAttribute("character-id") ||
+        "0"
     );
 
-    // Show only the selected character card in episode-container
     showSelectedCharacter(characterId);
   }
 });
