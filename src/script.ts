@@ -2,11 +2,9 @@ import { Episode, CharacterInfos, Location, Seasons } from "./types/interface";
 
 const episodesList: HTMLUListElement =
   document.querySelector(".nav-container")!;
-const episodeDetailsContainer = document.querySelector(".episode-container");
 const characterInfoContainer = document.querySelector(
   ".character-list-container"
 ) as HTMLElement;
-const characterCard = document.querySelector(".character-card");
 const welcomeContainer = document.querySelector(
   ".welcome-container"
 ) as HTMLElement;
@@ -32,7 +30,6 @@ async function fetchEpisodes(): Promise<Episode[]> {
       throw error; // Propagate the error to the outer catch block
     }
   };
-
   try {
     await Promise.all([1, 2, 3].map(fetchPage));
   } catch (error) {
@@ -106,6 +103,7 @@ async function displayEpisodeDetails(episode: Episode, container: HTMLElement) {
       <p>${characterInfo.name}</p>
       <p>Status: ${characterInfo.status}</p>
       <p> Species: ${characterInfo.species}</p>
+      <button> View </button>
       </div>`;
     }
   } catch (error) {
@@ -122,6 +120,7 @@ fetchEpisodes()
       event.preventDefault();
     });
 
+    // Add a new event listener specifically for episodesList
     episodesList?.addEventListener("click", async (event) => {
       const clickedElement = event.target as HTMLElement;
 
@@ -169,10 +168,7 @@ async function showSelectedCharacter(characterId: number) {
     const selectedCharacterInfo = await fetchCharacterInfo(
       `https://rickandmortyapi.com/api/character/${characterId}`
     );
-
-    // Fetch origin information sequentially
-    const originData = await fetch(selectedCharacterInfo.origin.url);
-    const originInfo = await originData.json();
+    console.log(fetchCharacterInfo);
 
     // Fetch episode names sequentially using the URLs
     const episodeNames = [];
@@ -181,6 +177,7 @@ async function showSelectedCharacter(characterId: number) {
       const episodeJson = await episodeData.json();
       episodeNames.push(episodeJson.name);
     }
+    console.log(selectedCharacterInfo);
 
     // Create a new div to hold the selected character information
     const characterDiv = document.createElement("div");
@@ -196,7 +193,7 @@ async function showSelectedCharacter(characterId: number) {
       <p>Species: ${selectedCharacterInfo.species}</p>
       <p>Type: ${selectedCharacterInfo.type}</p>
       <p>Gender: ${selectedCharacterInfo.gender}</p>
-      <p>Origin: ${originInfo.name}</p>
+      <p>Origin: ${selectedCharacterInfo.origin.name}</p>
       <p>Location: ${selectedCharacterInfo.location.name}</p>
       <p>Episodes: ${episodeNames.join(", ")}</p>
     `;
@@ -214,15 +211,17 @@ document.addEventListener("click", (event) => {
   // Check if the clicked element is a character card
   if (clickedElement.classList.contains("character-card")) {
     // Prevent default behavior
-    // event.preventDefault();
+    event.preventDefault();
 
     // Get the character ID from the clicked card
     const characterId = parseInt(
-      clickedElement.getAttribute("character-id") || "0",
-      10
+      clickedElement.getAttribute("character-id") || "0"
     );
 
     // Show only the selected character card in episode-container
     showSelectedCharacter(characterId);
   }
+});
+characterInfoContainer.addEventListener("click", (event) => {
+  event.preventDefault();
 });

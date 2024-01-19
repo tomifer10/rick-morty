@@ -8,9 +8,7 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 const episodesList = document.querySelector(".nav-container");
-const episodeDetailsContainer = document.querySelector(".episode-container");
 const characterInfoContainer = document.querySelector(".character-list-container");
-const characterCard = document.querySelector(".character-card");
 const welcomeContainer = document.querySelector(".welcome-container");
 const episodeDatas = document.querySelector(".episode-datas");
 function hideWelcomeContainer(container) {
@@ -98,6 +96,7 @@ function displayEpisodeDetails(episode, container) {
       <p>${characterInfo.name}</p>
       <p>Status: ${characterInfo.status}</p>
       <p> Species: ${characterInfo.species}</p>
+      <button> View </button>
       </div>`;
             }
         }
@@ -145,14 +144,14 @@ function showSelectedCharacter(characterId) {
             return;
         try {
             const selectedCharacterInfo = yield fetchCharacterInfo(`https://rickandmortyapi.com/api/character/${characterId}`);
-            const originData = yield fetch(selectedCharacterInfo.origin.url);
-            const originInfo = yield originData.json();
+            console.log(fetchCharacterInfo);
             const episodeNames = [];
             for (const episodeUrl of selectedCharacterInfo.episode) {
                 const episodeData = yield fetch(episodeUrl);
                 const episodeJson = yield episodeData.json();
                 episodeNames.push(episodeJson.name);
             }
+            console.log(selectedCharacterInfo);
             const characterDiv = document.createElement("div");
             characterDiv.classList.add("selected-character-container");
             characterDiv.innerHTML = `
@@ -162,7 +161,7 @@ function showSelectedCharacter(characterId) {
       <p>Species: ${selectedCharacterInfo.species}</p>
       <p>Type: ${selectedCharacterInfo.type}</p>
       <p>Gender: ${selectedCharacterInfo.gender}</p>
-      <p>Origin: ${originInfo.name}</p>
+      <p>Origin: ${selectedCharacterInfo.origin.name}</p>
       <p>Location: ${selectedCharacterInfo.location.name}</p>
       <p>Episodes: ${episodeNames.join(", ")}</p>
     `;
@@ -177,9 +176,13 @@ function showSelectedCharacter(characterId) {
 document.addEventListener("click", (event) => {
     const clickedElement = event.target;
     if (clickedElement.classList.contains("character-card")) {
-        const characterId = parseInt(clickedElement.getAttribute("character-id") || "0", 10);
+        event.preventDefault();
+        const characterId = parseInt(clickedElement.getAttribute("character-id") || "0");
         showSelectedCharacter(characterId);
     }
+});
+characterInfoContainer.addEventListener("click", (event) => {
+    event.preventDefault();
 });
 export {};
 //# sourceMappingURL=script.js.map
