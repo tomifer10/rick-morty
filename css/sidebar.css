@@ -34,9 +34,10 @@ aside {
 }
 
 .nav-container li:hover {
-  background-color: #c7f9cc;
+  background-color: #168aae;
+
   border-bottom: 1px solid #b5e48c;
-  color: #000;
+  color: #82c91e;
 }
 .button-container {
   text-align: center;

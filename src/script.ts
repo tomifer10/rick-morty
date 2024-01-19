@@ -164,11 +164,6 @@ async function showSelectedCharacter(characterId: number) {
       episodeNames.push(episodeJson.name);
     }
 
-    // Find the episode corresponding to the selected character
-    const selectedEpisode = episodes.find(
-      (episode) => episode?.episode === selectedCharacterInfo.episode[0]
-    );
-
     // Create a new div to hold the selected character information
     const characterDiv = document.createElement("div");
     characterDiv.classList.add("selected-character-container");

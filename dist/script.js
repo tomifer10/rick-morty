@@ -141,7 +141,6 @@ function showSelectedCharacter(characterId) {
                 const episodeJson = yield episodeData.json();
                 episodeNames.push(episodeJson.name);
             }
-            const selectedEpisode = episodes.find((episode) => (episode === null || episode === void 0 ? void 0 : episode.episode) === selectedCharacterInfo.episode[0]);
             const characterDiv = document.createElement("div");
             characterDiv.classList.add("selected-character-container");
             characterDiv.innerHTML = `
