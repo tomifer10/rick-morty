@@ -4,7 +4,7 @@ section {
 }
 
 .episode-container {
-  background-color: #c7f9cc;
+  background-color: var(--primary-color);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -34,7 +34,6 @@ section {
   align-items: center;
   justify-content: center;
   text-align: center;
-  height: ;
 }
 .episode-container > div {
   display: flex;
@@ -56,7 +55,7 @@ section {
   margin-bottom: 1rem;
   text-align: center;
   font-family: "Press Start 2P", system-ui;
-  color: #168aae;
+  color: var(--secondary-color);
 }
 
 .episode-container p {

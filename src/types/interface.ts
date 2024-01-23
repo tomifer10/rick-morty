@@ -23,15 +23,3 @@ export interface CharacterInfos {
   url?: string;
   created?: string;
 }
-
-export interface Location {
-  name: string;
-  url: string;
-}
-export interface Seasons {
-  season1: Episode[];
-  season2: Episode[];
-  season3: Episode[];
-  season4: Episode[];
-  season5: Episode[];
-}

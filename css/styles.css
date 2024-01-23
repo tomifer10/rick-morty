@@ -5,8 +5,8 @@
 @import url(./characters.css);
 @import url(./media.css);
 :root {
-  --header-color: #80ee99;
-  --sidebar-color: #168aae;
+  --primary-color: #c7f9cc;
+  --secondary-color: #168aae;
 }
 
 * {

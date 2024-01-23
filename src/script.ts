@@ -1,4 +1,4 @@
-import { Episode, CharacterInfos, Location, Seasons } from "./types/interface";
+import { Episode, CharacterInfos } from "./types/interface";
 
 const episodesList: HTMLUListElement =
   document.querySelector(".nav-container")!;
@@ -178,8 +178,8 @@ async function showSelectedCharacter(characterId: number) {
         <p>Species: ${selectedCharacterInfo.species}</p>
         <p>Type: ${selectedCharacterInfo.type}</p>
         <p>Gender: ${selectedCharacterInfo.gender}</p>
-        <p>Origin: ${selectedCharacterInfo.origin.name}</p>
-        <p>Location: ${selectedCharacterInfo.location.name}</p>
+        <p>Origin: ${selectedCharacterInfo.origin}</p>
+        <p>Location: ${selectedCharacterInfo.location}</p>
         <p>Episodes: ${episodeNames.join(", ")}</p>
         
       `;

@@ -1,30 +1,61 @@
 /* Mobile-first styles */
 @media only screen and (max-width: 768px) {
   .header {
-    height: auto; /* Allow the height to adjust based on content */
-    flex-direction: column; /* Stack items vertically */
-    text-align: center; /* Center items horizontally */
+    height: auto;
+    flex-direction: column;
+    text-align: center;
     align-items: center;
   }
   .header h1 {
-    margin-top: 0.2rem; /* Add some space between the logo and the title */
-  }
-  .header img {
-    max-width: 5rem; /* Adjust the size as needed */
+    margin-top: 0.2rem;
+    .header img {
+      max-width: 5rem;
+    }
   }
   aside {
     flex: 100%;
     flex-wrap: wrap;
   }
   .episode-container {
-    margin: 1rem; /* Adjust margin for better spacing on small screens */
+    margin: 1rem;
   }
 
   .imgcover {
-    max-height: auto; /* Adjust the maximum height as needed */
+    max-height: auto;
   }
 
   .episode-container h2 {
-    font-size: 1.2rem; /* Adjust font size for better readability on small screens */
+    font-size: 1.2rem;
+  }
+  .footer {
+    padding: 0.5rem;
+    text-align: center;
+  }
+
+  .footer-bottom {
+    margin-top: 1rem;
+    text-align: center;
+  }
+  section {
+    flex: 100%;
+    padding: 1rem;
+  }
+
+  .episode-container {
+    margin: 1rem;
+    padding: 1rem;
+  }
+
+  .episode-datas {
+    height: auto;
+  }
+
+  .imgcover {
+    height: auto;
+    width: 100%;
+  }
+
+  .character-card {
+    width: 100%;
   }
 }

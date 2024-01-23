@@ -6,8 +6,7 @@ aside {
   top: 6rem;
   margin-top: 3rem;
   flex: 20%;
-  /* background-color: var(--sidebar-color); */
-  background-color: #c7f9cc;
+  background-color: var(--primary-color);
   overflow-y: auto;
   max-height: 40rem;
   border-radius: 10px;
@@ -18,7 +17,7 @@ aside {
   font-family: "Press Start 2P", system-ui;
   font-size: 1.3rem;
   text-align: center;
-  color: #168aae;
+  color: var(--secondary-color);
 }
 
 .nav-container {
@@ -42,44 +41,4 @@ aside {
 .button-container {
   text-align: center;
   margin-bottom: 1rem;
-}
-
-.loadMoreButton {
-  width: 40%;
-  padding: 1rem;
-  margin-top: 1rem;
-  font-family: "Press Start 2P", system-ui;
-  background-color: var(--sidebar-color);
-  color: #b5e48c;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.backButton {
-  width: 40%;
-  padding: 1rem;
-  margin-top: 1rem;
-  font-family: "Press Start 2P", system-ui;
-  background-color: var(--sidebar-color);
-  color: #b5e48c;
-  font-size: 1rem;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  transition: background-color 0.3s ease, color 0.3s ease;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-}
-
-.loadMoreButton:hover {
-  background-color: #82c91e;
-  color: #1d6091;
-}
-
-.backButton:hover {
-  background-color: #82c91e;
-  color: #1d6091;
 }
